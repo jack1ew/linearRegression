@@ -1,43 +1,23 @@
-import itertools
-import math
-global x, y = student_grades()
-global x_mean = find_mean(x)
-global y_mean = find_mean(y)
-
-# used to find the mean of x and y
-def find_mean(i):
-    return sum(a)/len(a)
-
-# finds the numerator for the r equation
-def find_num():
-    sum = 0
-    # performs the summation
-    # llst contains (x - x_mean)
-    # rlst contians (y - y_mean)
-    global llst = [i - x_mean for i in x]
-    global rlst = [i - y)_mean for i in y]
-    for (i, j) in zip(llst, rlst):
-        sum = sum + (i*j)
-    return sum
-
-#finds the denominator of the r equation
-def find_den():
-
-    # sq_x contains (x - x_mean)^2
-    # sq_y contains (y - y_mean)^2
-    sq_x = [i**2 for i in llst]
-    sq_y = [i**2 for i in rlst]
-
-    sum_sq_x = sum(sq_x)
-    sum_sq_y = sum(sq_y)
-    return (sum_sq_x * sum_sq_y)**.5
-
-# reads the file with the student names
-def student_grades(file_name):
-    
+import pandas as pd
+import numpy as np
+import sklearn
+from sklearn import linear_model
+from sklearn.utils import shuffle
 
 def main():
-    r = find_num()/find_den()
-    
+    data = pd.read_csv("student-mat.csv", sep=";")
+    data = data[["G1", "G2", "G3", "studytime", "failures", "absences"]]
+    predict = "G3"
+    x = np.array(data.drop([predict], 1))
+    y = np.array(data[predict])
+
+    x_train, x_test, y_train, y_test = sklearn.model_selection.train_test_split(x, y, test_size = 0.1)
+    linear = linear_model.LinearRegression()
+    linear.fit(x_train, y_train)
+    acc = linear.score(x_test, y_test)
+    predictions = linear.predict(x_test)
+    for i in range(len(predictions)):
+        print('Predicted grade: ', predictions[i], 'Varaibles: ', x_test[i], 'Actual Grade: ', y_test[i])
 
 if __name__ == "__main__":
+    main()
